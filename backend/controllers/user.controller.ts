@@ -40,3 +40,22 @@ export const FindUser = async (req: Request, res: Response, next: NextFunction):
     }
     next();
 }
+
+export const GetUserData = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        let { userId = "" } = req.query as { userId?: string };
+        if (userId === "") {
+            throw createHttpError.BadRequest("Something went wrong");
+        }
+
+        const userData = await User.findOne({
+            _id: userId
+        }).select("-password -passwordChangedAt -verified -friends")
+        res.status(200).json({
+            status: "success",
+            userData: userData,
+        });
+    } catch (err) {
+        next(err)
+    }
+}

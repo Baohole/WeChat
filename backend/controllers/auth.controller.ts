@@ -297,3 +297,17 @@ export const SendOtp = async (req: Request, res: Response, next: NextFunction): 
         next(error);  // Pass the error to the error-handling middleware
     }
 }
+
+//[POST] /auth/logout
+export const Logout = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        res.clearCookie('accessToken')
+        res.status(200).json({
+            status: "success",
+            message: "Logged out successfully",
+        });
+    }
+    catch (err) {
+        next(err)
+    }
+}

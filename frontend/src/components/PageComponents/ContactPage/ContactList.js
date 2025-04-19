@@ -112,12 +112,22 @@ const ContactList = () => {
     .sort((a, b) => a.firstName.localeCompare(b.firstName));
 
   // Group contacts by first letter of firstName
-  const groupedContacts = sortedMembersList.reduce((acc, contact) => {
-    const firstLetter = contact.firstName[0].toUpperCase();
-    if (!acc[firstLetter]) {
-      acc[firstLetter] = [];
+  const groupedContacts = (sortedMembersList || []).reduce((acc, contact) => {
+    // Check if contact and firstName exist before trying to access them
+    if (contact && contact.firstName && typeof contact.firstName === 'string') {
+      const firstLetter = contact.firstName[0].toUpperCase();
+      if (!acc[firstLetter]) {
+        acc[firstLetter] = [];
+      }
+      acc[firstLetter].push(contact);
+    } else {
+      // Handle contacts without a valid firstName (optional)
+      const group = '#'; // Use a symbol for contacts without names
+      if (!acc[group]) {
+        acc[group] = [];
+      }
+      acc[group].push(contact);
     }
-    acc[firstLetter].push(contact);
     return acc;
   }, {});
   // --------------------------------------------
@@ -180,34 +190,34 @@ const ContactList = () => {
             >
               {isLoading
                 ? MembersList.map((e) => {
-                    return (
-                      <AllChatElement
-                        key={e._id}
-                        {...e}
-                        isLoading={isLoading}
-                      />
-                    );
-                  })
+                  return (
+                    <AllChatElement
+                      key={e._id}
+                      {...e}
+                      isLoading={isLoading}
+                    />
+                  );
+                })
                 : //Render contacts grouped by first letter
-                  Object.entries(groupedContacts).map(([letter, contacts]) => (
-                    <Stack spacing={0.5} key={letter}>
-                      <Typography variant="subtitle2">{letter}</Typography>
-                      {contacts.map((contact) => (
-                        <AllChatElement
-                          key={contact._id}
-                          {...contact}
-                          latestMessage={
-                            contact._id === user._id
-                              ? { message: "Message yourself" }
-                              : contact.latestMessage
-                          }
-                          isLoading={isLoading}
-                          fromContact={true}
-                          toggleDrawer={toggleDrawer}
-                        />
-                      ))}
-                    </Stack>
-                  ))}
+                Object.entries(groupedContacts).map(([letter, contacts]) => (
+                  <Stack spacing={0.5} key={letter}>
+                    <Typography variant="subtitle2">{letter}</Typography>
+                    {contacts.map((contact) => (
+                      <AllChatElement
+                        key={contact._id}
+                        {...contact}
+                        latestMessage={
+                          contact._id === user._id
+                            ? { message: "Message yourself" }
+                            : contact.latestMessage
+                        }
+                        isLoading={isLoading}
+                        fromContact={true}
+                        toggleDrawer={toggleDrawer}
+                      />
+                    ))}
+                  </Stack>
+                ))}
             </Stack>
           </>
         ) : (
