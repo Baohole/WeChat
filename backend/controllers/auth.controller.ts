@@ -11,6 +11,7 @@ import reset from '../mailtemplates/reset';
 
 import User, { IUser } from '../models/User.models';
 import Otp from '../models/Otp.models';
+import AuthenticatedRequest from '../interface/request.inf';
 
 // const createOTP = require('../../helper/creatOTP.helper');
 // const sendMail = require('../../helper/sendMail.helper');
@@ -301,6 +302,8 @@ export const SendOtp = async (req: Request, res: Response, next: NextFunction): 
 //[POST] /auth/logout
 export const Logout = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
+        console.log(req.body)
+        res.clearCookie('accessToken');
         res.status(200).json({
             status: "success",
             message: "Logged out successfully",
