@@ -31,23 +31,23 @@ const OnlineFriendsElement = ({ fromContact }) => {
         <Stack direction={"row"} alignItems={"center"} spacing={2}>
           {isLoading
             ? MembersList.filter((e) => e.online === true).map((e) => (
-                <SwiperSlide key={e._id}>
-                  <OnlineChatElement {...e} isLoading={isLoading} />
-                </SwiperSlide>
-              ))
+              <SwiperSlide key={e._id}>
+                <OnlineChatElement {...e} isLoading={isLoading} />
+              </SwiperSlide>
+            ))
             : onlineFriends
-                .filter(
-                  (e) => e._id !== user._id && e.onlineStatus === "online"
-                )
-                .map((e) => (
-                  <SwiperSlide key={e._id}>
-                    <OnlineChatElement
-                      {...e}
-                      isLoading={isLoading}
-                      fromContact={fromContact}
-                    />
-                  </SwiperSlide>
-                ))}
+              .filter(
+                (e) => e._id !== user._id
+              )
+              .map((e) => (
+                <SwiperSlide key={e._id}>
+                  <OnlineChatElement
+                    {...e}
+                    isLoading={isLoading}
+                    fromContact={fromContact}
+                  />
+                </SwiperSlide>
+              ))}
         </Stack>
       </Swiper>
     </Stack>

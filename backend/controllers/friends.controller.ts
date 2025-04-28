@@ -5,16 +5,7 @@ import mongoose from "mongoose";
 import User from '../models/User.models';
 import FriendRequest from '../models/FriendRequest.models';
 
-interface AuthenticatedRequest extends Request {
-    user: {
-        _id: mongoose.Types.ObjectId;
-        friends: [{ type: mongoose.Schema.Types.ObjectId }],
-        firstName: string,
-        lastName: string
-        // Add other user properties you need
-    }
-
-}
+import AuthenticatedRequest from '../interface/request.inf';
 
 export const SendReq = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
@@ -280,4 +271,57 @@ export const CancelReq = async (req: Request, res: Response, next: NextFunction)
         next(err)
     }
 
+}
+
+export const OnlFriends = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        const _id = (req as AuthenticatedRequest).user._id;
+
+        const user = await User.aggregate([
+            { $match: { _id: _id } },
+            {
+                $lookup: {
+                    from: "users",
+                    localField: "friends",
+                    foreignField: "_id",
+                    as: "friends"
+                }
+            },
+            { $unwind: "$friends" },
+            {
+                $match: {
+                    "friends._id": { $ne: _id }  // <- exclude if friend._id == user._id
+                }
+            },
+            {
+                $project: {
+                    friend: {
+                        _id: "$friends._id",
+                        firstName: "$friends.firstName",
+                        lastName: "$friends.lastName",
+                        onlineStatus: "$friends.onlineStatus",
+                        avatar: "$friends.avatar"
+                    }
+                }
+            },
+            { $sort: { "friend.onlineStatus": -1 } }, // online first
+            { $limit: 20 },
+            {
+                $group: {
+                    _id: "$_id",
+                    friends: { $push: "$friend" }
+                }
+            }
+        ]);
+
+        // const currentUser = user[0];
+
+        // console.log(user[0].friends)
+        res.status(200).json({
+            status: "success",
+            onlineFriends: user[0].friends || [],
+        });
+    } catch (error) {
+        next(error);
+    }
 }

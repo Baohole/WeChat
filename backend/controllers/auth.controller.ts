@@ -25,7 +25,7 @@ export const Login = async (req: Request, res: Response, next: NextFunction): Pr
             throw createHttpError.BadRequest("Required fields: email & password");
         }
 
-        const user = await User.findOne({ email: email }).select('password');
+        const user = await User.findOne({ email: email }).select('-password');
         // console.log(user)
         // if (!user || !(await user.correctPassword(password, user.password))) {
         //     throw createHttpError.BadRequest("Incorrect Email or Password")
@@ -301,7 +301,6 @@ export const SendOtp = async (req: Request, res: Response, next: NextFunction): 
 //[POST] /auth/logout
 export const Logout = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
-        res.clearCookie('accessToken')
         res.status(200).json({
             status: "success",
             message: "Logged out successfully",

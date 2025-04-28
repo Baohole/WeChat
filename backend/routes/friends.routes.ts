@@ -12,5 +12,6 @@ router.post('/cancel-request', trimRequest.all, controller.CancelReq);
 router.get('/get-requests', trimRequest.all, controller.GetReq);
 router.get('/get-friends', trimRequest.all, controller.GetFriends);
 router.get('/get-sent-requests', trimRequest.all, controller.GetSentReq);
+router.get('/online-friends', trimRequest.all, controller.OnlFriends);
 
 export default router;
