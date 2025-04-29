@@ -71,6 +71,7 @@ const DashboardLayout = () => {
       });
 
       socket.on("message_received", (message) => {
+        // console.log(message)
         dispatch(updateMsgConvo(message));
       });
 

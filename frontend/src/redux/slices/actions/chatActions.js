@@ -99,6 +99,7 @@ export const SendMessage = createAsyncThunk(
         // emit send message to socket
         socket.emit("send_message", data.message);
       }
+      console.log(data)
       return data;
     } catch (error) {
       // show snackbar

@@ -209,8 +209,6 @@ export const ResetPassword = async (req: Request, res: Response): Promise<any> =
             passwordResetExpires: { $gt: Date.now() },
         });
 
-        console.log('ok', user)
-
         if (!user) {
             throw createHttpError.BadRequest("Token Expired or Invalid Token");
         }
@@ -302,7 +300,6 @@ export const SendOtp = async (req: Request, res: Response, next: NextFunction): 
 //[POST] /auth/logout
 export const Logout = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     try {
-        console.log(req.body)
         res.clearCookie('accessToken');
         res.status(200).json({
             status: "success",

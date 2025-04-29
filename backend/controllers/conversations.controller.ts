@@ -6,6 +6,7 @@ import User from '../models/User.models';
 import Conversation from "../models/Conversation.models";
 
 import AuthenticatedRequest from '../interface/request.inf';
+import getAllConversations from "../services/getAllConver.services";
 
 // import { UserModel } from "../models/index.js";
 // import {
@@ -73,46 +74,11 @@ export const getConversations = async (req: Request, res: Response, next: NextFu
     try {
         const _id = (req as AuthenticatedRequest).user._id;
 
-        let conversations;
-        await Conversation.find({
-            users: { $elemMatch: { $eq: _id } },
-        })
-            .populate("users", "-verified -password -passwordChangedAt -friends")
-            .populate("admin", "-verified -password -passwordChangedAt -friends")
-            .populate("latestMessage")
-            .sort({ updatedAt: -1 })
-            .then(async (results: any) => {
-                results = await User.populate(results, {
-                    path: "latestMessage.sender",
-                    select: "firstName lastName avatar email activityStatus onlineStatus",
-                });
-                conversations = results;
-                // console.log(conversations)
-            })
-            .catch((err) => {
-                throw createHttpError.BadRequest(
-                    "Error fetching conversations, try again"
-                );
-            });
         // console.log(conversations)
+        const conversations = await getAllConversations(_id)
 
         res.status(200).json({ status: "success", conversations: conversations });
     } catch (error) {
         next(error);
     }
 };
-
-// ------------------------------------------------------------------------------
-
-// // ----------------------- Socket: Join Convo -----------------------
-// export const joinConvo = async (socket, user_id) => {
-//   try {
-//     const conversations = await getUserConversations(user_id);
-
-//     conversations.map((convo) => {
-//       socket.join(convo._id.toString());
-//     });
-//   } catch (error) {
-//     socket.errorHandler("Join convo error");
-//   }
-// };
