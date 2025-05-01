@@ -143,41 +143,41 @@ const ChatsList = () => {
               {/* loding skeleton */}
               {isLoading
                 ? MembersList.map((e) => {
-                    return (
-                      <AllChatElement
-                        key={e._id}
-                        {...e}
-                        isLoading={isLoading}
-                      />
-                    );
-                  })
+                  return (
+                    <AllChatElement
+                      key={e._id}
+                      {...e}
+                      isLoading={isLoading}
+                    />
+                  );
+                })
                 : conversations
-                    .filter(
-                      (e) =>
-                        e.latestMessage?.message ||
-                        e._id === activeConversation?._id
-                    )
-                    .map((conversation) => {
-                      const { users } = conversation;
+                  .filter(
+                    (e) =>
+                      (e.latestMessage?.message || e.latestMessage?.files.length > 0) ||
+                      e._id === activeConversation?._id
+                  )
+                  .map((conversation) => {
+                    const { users } = conversation;
 
-                      const chatElementProps = getOtherUser(
-                        users,
-                        user._id,
-                        onlineFriends
-                      );
+                    const chatElementProps = getOtherUser(
+                      users,
+                      user._id,
+                      onlineFriends
+                    );
 
-                      return (
-                        chatElementProps && (
-                          <AllChatElement
-                            key={conversation._id}
-                            convo_id={conversation._id}
-                            latestMessage={conversation.latestMessage}
-                            {...chatElementProps}
-                            isLoading={isLoading}
-                          />
-                        )
-                      );
-                    })}
+                    return (
+                      chatElementProps && (
+                        <AllChatElement
+                          key={conversation._id}
+                          convo_id={conversation._id}
+                          latestMessage={conversation.latestMessage}
+                          {...chatElementProps}
+                          isLoading={isLoading}
+                        />
+                      )
+                    );
+                  })}
             </Stack>
           </Stack>
         </>

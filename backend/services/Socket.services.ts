@@ -4,6 +4,8 @@ import getAllConversations from "./getAllConver.services";
 import createHttpError from "http-errors";
 import Conversation from "../models/Conversation.models";
 import Message from "../models/Message.models";
+import Cloudinary from "../utils/cloudinary.utils";
+import { domainToASCII } from "url";
 
 export const emitStatus = async (io: Server, socket: Socket, user: any, onlineStatus: string) => {
     try {
@@ -37,8 +39,8 @@ export const joinConver = async (socket: Socket, _id: mongoose.Types.ObjectId) =
 
 export const sendMess = async (socket: Socket, user_id: any, data: any) => {
     try {
-        const { _id, sender, conversation, message, files } = data;
-        if (!conversation._id || !message || !files) {
+        let { _id, sender, conversation, message, files } = data;
+        if (!conversation._id && (!message || !files)) {
             throw createHttpError.BadRequest("Invalid conversation id or message")
         }
 
@@ -47,6 +49,13 @@ export const sendMess = async (socket: Socket, user_id: any, data: any) => {
             throw createHttpError.NotFound("Conversation does not exist");
         }
 
+        if (data.fileData) {
+            files = await Promise.all(
+                data.fileData.map(async (f: any) => {
+                    return { url: await Cloudinary(f), isImage: f.isImage }; // ← pass the individual file
+                })
+            );
+        }
         const msgData = {
             _id: _id,
             sender: user_id,
@@ -54,7 +63,9 @@ export const sendMess = async (socket: Socket, user_id: any, data: any) => {
             conversation: conversation._id,
             files: files || [],
         };
+        // console.log(data.fileData[0])
 
+        // console.log(msgData);
         const newMess = await Message.create(msgData);
         if (!newMess) {
             throw createHttpError.BadRequest("Unable to create new message");
@@ -91,6 +102,21 @@ export const sendMess = async (socket: Socket, user_id: any, data: any) => {
             })
         if (!populatedMess) {
             throw createHttpError.BadRequest("Unable to populate message");
+        }
+
+        if (populatedMess && (!populatedMess.message || populatedMess.message.trim() === "")) {
+            if (populatedMess.files?.length > 0) {
+                const hasImage = populatedMess.files.some((f: any) => f.isImage);
+                const hasFile = populatedMess.files.some((f: any) => !f.isImage);
+
+                if (hasImage && hasFile) {
+                    (populatedMess as any).conversation.latestMessage.message = "Sent file(s) and photo(s)";
+                } else if (hasImage) {
+                    (populatedMess as any).conversation.latestMessage.message = `Sent ${populatedMess.files.length} photo(s)`;
+                } else if (hasFile) {
+                    (populatedMess as any).conversation.latestMessage.message = `Sent ${populatedMess.files.length} file(s)`;
+                }
+            }
         }
         return populatedMess;
     } catch (error) {

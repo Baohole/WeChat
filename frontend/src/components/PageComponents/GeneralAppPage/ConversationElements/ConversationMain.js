@@ -19,6 +19,8 @@ const ConversationMain = () => {
   // -------------- inner functions --------------
   // Function to check if the text only contains emojis
   const containsOnlyEmojis = (text) => {
+    if (!text) return false;
+
     const emojiRegex =
       /[\u{1F600}-\u{1F6FF}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/u;
     const emojiStatus = [...text].every((char) => emojiRegex.test(char));
@@ -30,8 +32,13 @@ const ConversationMain = () => {
   };
 
   // Function to determine message type
-  const getMessageType = (text) =>
-    containsOnlyEmojis(text) ? "emoji" : "text";
+  const getMessageType = (message) => {
+    // If message has files but no text, it's still a text message with attachments
+    if (!message.message || message.message.trim() === "") {
+      return "text"; // Treat empty messages with attachments as text
+    }
+    return containsOnlyEmojis(message.message) ? "emoji" : "text";
+  };
 
   // Function to check if the next message only contains emojis
   const nextMessageOnlyContainsEmojis = (index) =>
@@ -93,7 +100,7 @@ const ConversationMain = () => {
               me={user._id === e.sender._id}
               isStartOfSequence={isStartOfSequence}
               isEndOfSequence={isEndOfSequence}
-              msgType={getMessageType(e.message)}
+              msgType={getMessageType(e)}
               isLastMessage={isLastMessage}
             />
           );

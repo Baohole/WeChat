@@ -5,7 +5,7 @@ interface IMessage extends Document {
   sender: mongoose.Schema.Types.ObjectId;
   message: string;
   conversation: mongoose.Schema.Types.ObjectId;
-  files: string[]; // Assuming file URLs or paths are stored as strings
+  files: Array<object>; // Assuming file URLs or paths are stored as strings
   createdAt: Date;
   updatedAt: Date;
 }
@@ -14,9 +14,14 @@ interface IMessage extends Document {
 const messageSchema = new Schema<IMessage>(
   {
     sender: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    message: { type: String, trim: true, required: true },
+    message: { type: String, trim: true },
     conversation: { type: mongoose.Schema.Types.ObjectId, ref: "Conversation", required: true },
-    files: { type: [String], default: [] }, // Ensuring files is an array of strings
+    files: {
+      type: [{
+        isImage: Boolean,
+        url: String,
+      }], default: []
+    }, // Ensuring files is an array of strings
   },
   {
     timestamps: true, // Mongoose will automatically add `createdAt` and `updatedAt`

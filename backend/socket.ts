@@ -72,7 +72,6 @@ export const initSocketServer = (server: HttpServer) => {
             try {
                 const conversation = message.conversation;
                 if (!conversation.users) return;
-
                 // Create a new message with a generated ID
                 const msg_id = new mongoose.Types.ObjectId();
                 message._id = msg_id;
@@ -86,10 +85,7 @@ export const initSocketServer = (server: HttpServer) => {
                     conversation.users.forEach((u: any) => {
                         if (savedMessage.sender && u._id &&
                             savedMessage.sender.toString() !== u._id.toString()) {
-                            // Use io.to() instead of socket.in() to ensure delivery
-                            const clients = io.sockets.adapter.rooms.get(u._id);
-                            console.log(typeof u._id, clients)
-                            socket.in(conversation._id).emit("message_received", savedMessage);
+                            socket.in(u._id).emit("message_received", savedMessage);
                         }
                     });
                 }

@@ -325,3 +325,53 @@ export const OnlFriends = async (req: Request, res: Response, next: NextFunction
         next(error);
     }
 }
+
+export const SearchFriends = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
+        const pageSize: number = 10;
+        const { search, page }: { search: string, page: string } = req.query as any;
+        if (!search) {
+            throw createHttpError.BadRequest("Query required");
+        }
+
+        const _id = (req as AuthenticatedRequest).user._id;
+        const user = await User.findById(_id);
+        const regex = new RegExp(search, 'i');
+        const certirial = {
+            _id: { $in: user.friends },
+            $or: [{
+                $or: [{
+                    firstName: regex
+                },
+                {
+                    lastName: regex
+                }, {
+                    email: regex
+                }, {
+                    $expr: {
+                        $regexMatch: {
+                            input: { $concat: ["$firstName", " ", "$lastName"] },
+                            regex: regex,
+                        },
+                    }
+                }]
+            }]
+        }
+
+        const resutl = await User.find(certirial)
+            .select("_id firstName lastName email avatar activityStatus onlineStatus")
+            .limit(pageSize)
+            .skip(parseInt(page) * pageSize);
+
+        const totalCount = await User.countDocuments(certirial);
+
+        res.status(200).json({
+            status: "success",
+            usersFound: totalCount,
+            friends: resutl,
+        });
+    }
+    catch (err) {
+        next(err);
+    }
+}

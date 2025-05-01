@@ -72,7 +72,6 @@ export const GetMessages = createAsyncThunk(
   async (convoId, { rejectWithValue, dispatch }) => {
     try {
       const { data } = await axios.get(`/message/get-messages/${convoId}`);
-
       return data;
     } catch (error) {
       // show snackbar
@@ -87,19 +86,42 @@ export const GetMessages = createAsyncThunk(
   }
 );
 
-// ------------- Get Messages -------------
+// ------------- Send Message -------------
 export const SendMessage = createAsyncThunk(
   "message/send-message",
   async (messageData, { rejectWithValue, dispatch, getState }) => {
     try {
-      const { data } = await axios.post("/message/send-message", messageData);
+      let response;
+
+      // Check if formData is provided (for file uploads)
+      if (messageData.formData) {
+        const config = {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        };
+
+        response = await axios.post(
+          `/message/send-message/${messageData.convo_id}`,
+          messageData.formData,
+          config
+        );
+      } else {
+        // Traditional text-only message
+        response = await axios.post("/message/send-message", {
+          message: messageData.message,
+          convo_id: messageData.convo_id
+        });
+      }
+
+      const { data } = response;
 
       // Approach check
       if (!getState().chat.isOptimistic) {
         // emit send message to socket
         socket.emit("send_message", data.message);
       }
-      console.log(data)
+
       return data;
     } catch (error) {
       // show snackbar

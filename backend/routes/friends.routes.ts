@@ -13,5 +13,6 @@ router.get('/get-requests', trimRequest.all, controller.GetReq);
 router.get('/get-friends', trimRequest.all, controller.GetFriends);
 router.get('/get-sent-requests', trimRequest.all, controller.GetSentReq);
 router.get('/online-friends', trimRequest.all, controller.OnlFriends);
+router.get('/search', trimRequest.all, controller.SearchFriends);
 
 export default router;

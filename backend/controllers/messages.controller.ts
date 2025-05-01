@@ -22,6 +22,7 @@ export const GetMess = async (req: Request, res: Response, next: NextFunction): 
         }).populate("sender", "firstName lastName avatar email activityStatus")
             .populate("conversation");
 
+
         if (!messages) {
             throw createHttpError.BadRequest("Unable to fetch messages");
         }

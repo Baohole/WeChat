@@ -32,6 +32,8 @@ const ConversationFooter = ({
 
   const [value, setValue] = useState("");
   const [openPicker, setOpenPicker] = useState(false);
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedFiles, setSelectedFiles] = useState([]);
   const inputRef = useRef(null);
   const pickerRef = useRef(null);
 
@@ -44,8 +46,8 @@ const ConversationFooter = ({
 
       setValue(
         value.substring(0, selectionStart) +
-          emoji +
-          value.substring(selectionEnd)
+        emoji +
+        value.substring(selectionEnd)
       );
 
       // Move the cursor to the end of the inserted emoji with a slight delay
@@ -62,13 +64,88 @@ const ConversationFooter = ({
     }
   };
 
-  const handleSubmit = (e) => {
+  // Callback để nhận files từ ChatInput component
+  const handleFilesFromChatInput = (images, files) => {
+    setSelectedImages(images);
+    setSelectedFiles(files);
+  };
+
+  // Hàm reset tất cả các files, images, và input field
+  const resetAllFiles = () => {
+    // Reset state
+    setSelectedImages([]);
+    setSelectedFiles([]);
+    setValue("");
+
+    // Reset tất cả các input file
+    document.querySelectorAll('#preview').forEach(el => el.remove());
+
+    // Force cập nhật DOM để preview được xóa
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 0);
+  };
+
+  const handleSubmit = (e, images = selectedImages, files = selectedFiles) => {
     e.preventDefault();
 
-    if (value && value.trim() !== "") {
-      // --------- Optimistic Approach ---------
-      if (isOptimistic) {
-        const currentDate = new Date().getTime();
+    const hasMedia = images.length > 0 || files.length > 0;
+    const hasText = value.trim() !== "";
+    const hasContent = hasText || hasMedia;
+
+    if (hasContent) {
+      const currentDate = new Date().getTime();
+
+      // Mảng chứa dữ liệu file dưới dạng base64
+      const filePromises = [];
+
+      // Chuyển đổi tất cả các image files sang base64
+      if (images && images.length > 0) {
+        images.forEach(file => {
+          const promise = new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              resolve({
+                data: reader.result, // base64 data
+                name: file.name,
+                type: file.type,
+                size: file.size,
+                isImage: true
+              });
+            };
+            reader.readAsDataURL(file); // Đọc file dưới dạng base64
+          });
+          filePromises.push(promise);
+        });
+      }
+
+      // Chuyển đổi tất cả các document files sang base64
+      if (files && files.length > 0) {
+        files.forEach(file => {
+          const promise = new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              resolve({
+                data: reader.result, // base64 data
+                name: file.name,
+                type: file.type,
+                size: file.size,
+                isImage: false
+              });
+            };
+            reader.readAsDataURL(file); // Đọc file dưới dạng base64
+          });
+          filePromises.push(promise);
+        });
+      }
+
+      // Đợi tất cả các file chuyển đổi xong
+      Promise.all(filePromises).then(fileDataArray => {
+        // Create temporary URLs for optimistic UI update
+        const tempImageUrls = images.map(file => URL.createObjectURL(file));
+        const tempFileUrls = files.map(file => URL.createObjectURL(file));
+        const allFileUrls = [...tempImageUrls, ...tempFileUrls];
+
         let messageData = {
           approach: "optimistic",
           _id: `${currentDate}`,
@@ -87,12 +164,13 @@ const ConversationFooter = ({
             latestMessage: {
               _id: `${currentDate} + 2500`,
               sender: currentUser,
-              message: value,
+              message: value.length > 0 ? value : `📷 ${images.length} photo(s) and 📎 ${files.length} file(s)`,
               createdAt: new Date(currentDate).toISOString(),
               updatedAt: new Date(currentDate).toISOString(),
             },
           },
-          files: [],
+          files: allFileUrls,          // URLs for optimistic UI update
+          fileData: fileDataArray,     // File data as base64 for backend processing
           createdAt: new Date(currentDate).toISOString(),
           updatedAt: new Date(currentDate).toISOString(),
           __v: 0,
@@ -108,17 +186,15 @@ const ConversationFooter = ({
           };
         }
 
-        // Optimistic Message Update
+        // Gửi message qua socket
         socket.emit("send_message", messageData);
-      }
-      // ------------------------------------------
-      else {
-        // send message
-        dispatch(SendMessage({ message: value, convo_id: convo_id }));
-      }
 
-      // Clear the input field
-      setValue("");
+        // Cleanup object URLs ngay lập tức
+        allFileUrls.forEach(url => URL.revokeObjectURL(url));
+
+        // Reset tất cả files và inputs
+        resetAllFiles();
+      });
     }
   };
 
@@ -175,6 +251,7 @@ const ConversationFooter = ({
               theme={theme}
               convo_id={convo_id}
               isOptimistic={isOptimistic}
+              onSubmitWithFiles={handleFilesFromChatInput}
             />
           </Stack>
 
@@ -189,6 +266,7 @@ const ConversationFooter = ({
               borderRadius: 20,
               transition: "background-color 0.2s ease",
             }}
+            onClick={(e) => handleSubmit(e)}
           >
             {sendMsgLoading ? (
               <Stack alignItems={"center"} justifyContent={"center"}>
