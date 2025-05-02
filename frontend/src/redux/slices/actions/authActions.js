@@ -145,7 +145,7 @@ export const VerifyOTP = createAsyncThunk(
       // generate recaptcha token
       const recaptchaToken = await recaptchaRef.current.executeAsync();
 
-      const { data } = await axios.post("http://localhost:8000/api/auth/verify-otp", {
+      const { data } = await axios.post("auth/verify-otp", {
         ...formValues,
         recaptchaToken,
       });
@@ -182,7 +182,7 @@ export const SendOTP = createAsyncThunk(
     dispatch(updateOtpEmail({ otpEmail: formValues.email }));
 
     try {
-      const { data } = await axios.post("http://localhost:8000/api/auth/send-otp", {
+      const { data } = await axios.post("/auth/send-otp", {
         ...formValues,
       });
 
@@ -245,7 +245,7 @@ export const ForgotPassword = createAsyncThunk(
     const recaptchaToken = await recaptchaRef.current.executeAsync();
 
     try {
-      const { data } = await axios.post("http://localhost:8000/api/auth/forgot-password", {
+      const { data } = await axios.post("auth/forgot-password", {
         ...formValues,
         recaptchaToken,
       });
@@ -276,7 +276,7 @@ export const ResetPassword = createAsyncThunk(
   "auth/reset-password",
   async (formValues, { rejectWithValue, dispatch, getState }) => {
     try {
-      const { data } = await axios.post("http://localhost:8000/api/auth/reset-password", {
+      const { data } = await axios.post("auth/reset-password", {
         ...formValues,
       });
 
