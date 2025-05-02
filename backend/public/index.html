@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WeChat API</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #4f46e5;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 18px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .endpoint {
+            background-color: #f0f0f0;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin-bottom: 10px;
+            text-align: left;
+        }
+
+        .emoji {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="emoji">🚀</div>
+        <h1>WeChat Backend API</h1>
+        <p>This is the API server for the WeChat application. The API endpoints are accessible via:</p>
+        <div class="endpoint">/.netlify/functions/api/</div>
+
+        <p>For example, to access the messages endpoint:</p>
+        <div class="endpoint">/.netlify/functions/api/message/get-messages/:conversationId</div>
+
+        <p>To learn more about the available endpoints, please refer to the API documentation or contact the development
+            team.</p>
+    </div>
+</body>
+
+</html>
