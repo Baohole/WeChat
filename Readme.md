@@ -6,8 +6,6 @@
 A Real-Time web-based MERN Chat App.
 { Development in Progress }
 
-![WeChat](https://i.imgur.com/CMGzVa3.png)
-
 ## ✅ Site Status
 
 Live At: <a href="https://wechat.vercel.app">Vercel | WeChat</a>
