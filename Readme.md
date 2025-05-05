@@ -7,7 +7,7 @@ A Real-Time web-based MERN Chat App.
 { Development in Progress }
 
 > [!NOTE]  
-> This project uses the frontend from TwinkConnect. It includes a set of ready-made UI components and a clean, modern design, which makes building the user interface faster and easier. The TwinkConnect frontend is flexible and easy to customize, so it can be adjusted to fit the project’s specific needs.
+> This project uses the frontend from WeChat - React Js Chat App. It includes a set of ready-made UI components and a clean, modern design, which makes building the user interface faster and easier. The WeChat - React Js Chat App frontend is flexible and easy to customize, so it can be adjusted to fit the project’s specific needs.
 
 ## ✅ Site Status
 
@@ -283,9 +283,6 @@ $ npm run build
 │   │   │   │   │   ├── flag_ja.svg
 │   │   │   │   │   ├── flag_vn.svg
 │   │   │   │   ├── logo/
-│   │   │   │   │   ├── TwinkConnect.png (legacy)
-│   │   │   │   │   ├── TwinkConnectSub.png (legacy)
-│   │   │   │   │   ├── VaibhawMishra.ico (legacy)
 │   │   │   │   │   ├── WeChat.png
 │   │   │   │   │   ├── WeChatSub.png
 │   │   │   ├── Illustration/
