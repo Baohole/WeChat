@@ -40,8 +40,6 @@ Live At: <a href="https://wechat.vercel.app">Vercel | WeChat</a>
 
     - OTP based verification and password reset functionality
 
-    - 3 Social logins methods (Google, GitHub & LinkedIn)
-
     - Disposable email check
 
     - Highly responsive UI
