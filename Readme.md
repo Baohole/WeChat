@@ -6,6 +6,9 @@
 A Real-Time web-based MERN Chat App.
 { Development in Progress }
 
+> [!NOTE]  
+> This project uses the frontend from TwinkConnect. It includes a set of ready-made UI components and a clean, modern design, which makes building the user interface faster and easier. The TwinkConnect frontend is flexible and easy to customize, so it can be adjusted to fit the project’s specific needs.
+
 ![WeChat](https://i.imgur.com/CMGzVa3.png)
 
 ## ✅ Site Status
@@ -198,55 +201,54 @@ $ npm run build
 
 ```
 ├── backend/
-│   ├── src/
-│   │   ├── controllers/
-│   │   │   ├── authController.js
-│   │   │   ├── conversationController.js
-│   │   │   ├── friendsController.js
-│   │   │   ├── messageController.js
-│   │   │   ├── socialController.js
-│   │   │   ├── userController.js
-│   │   ├── middlewares/
-│   │   │   ├── authMiddleware.js
-│   │   │   ├── socketMiddleware.js
-│   │   ├── models/
-│   │   │   ├── conversationModel.js
-│   │   │   ├── friendRequestModel.js
-│   │   │   ├── index.js
-│   │   │   ├── messageModel.js
-│   │   │   ├── userModel.js
-│   │   ├── routes/
-│   │   │   ├── authRouter.js
-│   │   │   ├── conversationRouter.js
-│   │   │   ├── friendsRouter.js
-│   │   │   ├── index.js
-│   │   │   ├── messageRouter.js
-│   │   │   ├── userRouter.js
-│   │   ├── services/
-│   │   │   ├── authService.js
-│   │   │   ├── conversationService.js
-│   │   │   ├── fileUploadService.js
-│   │   │   ├── friendsService.js
-│   │   │   ├── mailer.js
-│   │   │   ├── messageService.js
-│   │   │   ├── socialAuthService.js
-│   │   │   ├── tokenService.js
-│   │   │   ├── userService.js
-│   │   ├── Templates/
-│   │   │   ├── Mail/
-│   │   │   │   ├── otp.js
-│   │   │   │   ├── reset.js
-│   │   ├── utils/
-│   │   │   ├── checkDispose.js
-│   │   │   ├── filterObj.js
-│   │   │   ├── generatePassword.js
-│   │   │   ├── tokenGenerator.js
-│   ├── .env copy
-│   ├── app.js
-│   ├── package-lock.json
+│   ├── config/
+│   │   ├── apilink.ts
+│   │   ├── database.ts
+│   ├── controllers/
+│   │   ├── auth.controller.ts
+│   │   ├── conversations.controller.ts
+│   │   ├── friends.controller.ts
+│   │   ├── messages.controller.ts
+│   │   ├── user.controller.ts
+│   ├── interface/
+│   │   ├── request.inf.ts
+│   ├── mailtemplates/
+│   │   ├── reset.ts
+│   ├── middleware/
+│   │   ├── auth.mdlw.ts
+│   │   ├── auth.middleware.ts
+│   │   ├── socket.mdlw.ts
+│   ├── models/
+│   │   ├── Conversation.models.ts
+│   │   ├── FriendRequest.models.ts
+│   │   ├── Message.models.ts
+│   │   ├── Otp.models.ts
+│   │   ├── User.models.ts
+│   ├── public/
+│   │   ├── index.html
+│   ├── routes/
+│   │   ├── auth.routes.ts
+│   │   ├── conversations.routes.ts
+│   │   ├── friends.routes.ts
+│   │   ├── index.routes.ts
+│   │   ├── message.routes.ts
+│   │   ├── user.routes.ts
+│   ├── services/
+│   │   ├── AuthServ.services.ts
+│   │   ├── getAllConver.services.ts
+│   │   ├── Mailer.services.ts
+│   │   ├── Socket.services.ts
+│   │   ├── TokenServ.services.ts
+│   ├── utils/
+│   │   ├── cloudinary.utils.ts
+│   │   ├── CreatOtp.utils.ts
+│   │   ├── FilterObjs.utils.ts
+│   │   ├── GenToken.utils.ts
+│   ├── .env
+│   ├── index.ts
 │   ├── package.json
-│   ├── server.js
-│   ├── socket.js
+│   ├── socket.ts
+│   ├── tsconfig.json
 │   ├── vercel.json
 ```
 </details>
@@ -263,6 +265,7 @@ $ npm run build
 │   │   ├── manifest.json
 │   │   ├── robots.txt
 │   │   ├── sitemap.xml
+│   │   ├── sitemap.txt
 │   │   ├── _redirects
 │   ├── src/
 │   │   ├── assets/
@@ -282,6 +285,9 @@ $ npm run build
 │   │   │   │   │   ├── flag_ja.svg
 │   │   │   │   │   ├── flag_vn.svg
 │   │   │   │   ├── logo/
+│   │   │   │   │   ├── TwinkConnect.png (legacy)
+│   │   │   │   │   ├── TwinkConnectSub.png (legacy)
+│   │   │   │   │   ├── VaibhawMishra.ico (legacy)
 │   │   │   │   │   ├── WeChat.png
 │   │   │   │   │   ├── WeChatSub.png
 │   │   │   ├── Illustration/
