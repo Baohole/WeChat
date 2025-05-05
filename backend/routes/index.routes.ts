@@ -11,7 +11,7 @@ import * as AuthMdlw from '../middleware/auth.mdlw'
 import sysApi from "../config/apilink";
 
 export default (app: Express) => {
-    app.get("/start-server", (req, res) => {
+    app.get(`${sysApi}/start-server`, (req, res) => {
         res.send("Welcome to WeChat!!!");
     });
 

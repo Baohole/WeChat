@@ -44,7 +44,7 @@ const message_routes_1 = __importDefault(require("./message.routes"));
 const AuthMdlw = __importStar(require("../middleware/auth.mdlw"));
 const apilink_1 = __importDefault(require("../config/apilink"));
 exports.default = (app) => {
-    app.get("/start-server", (req, res) => {
+    app.get(`${apilink_1.default}/start-server`, (req, res) => {
         res.send("Welcome to WeChat!!!");
     });
     app.use(`${apilink_1.default}/auth`, auth_routes_1.default);
