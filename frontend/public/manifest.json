@@ -1,6 +1,6 @@
 {
-  "short_name": "TwinkConnect | MERN Chat",
-  "name": "MERN Chat App by Vaibhaw Mishra",
+  "short_name": "WeChat | MERN Chat",
+  "name": "MERN Chat App",
   "icons": [
     {
       "src": "favicon.ico",
@@ -18,5 +18,11 @@
   "prefer_related_applications": false,
   "related_applications": [],
   "shortcuts": [],
-  "categories": ["mern", "chat-app", "twinkconnect", "communication", "chat"]
+  "categories": [
+    "mern",
+    "chat-app",
+    "wechat",
+    "communication",
+    "chat"
+  ]
 }
