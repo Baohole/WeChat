@@ -1,18 +1,19 @@
 > [!IMPORTANT]
 > Please leave a ⭐ if you like this project.
 
-# TwinkConnect 😺
+# WeChat 😺
 
-A Real-Time web-based MERN Chat App by Vaibhaw Mishra.
+A Real-Time web-based MERN Chat App.
 { Development in Progress }
 
-![TwinkConnect](https://i.imgur.com/CMGzVa3.png)
+![WeChat](https://i.imgur.com/CMGzVa3.png)
 
 ## ✅ Site Status
 
-Live At: <a href="https://twinkconnect.netlify.app">Netlify | TwinkConnect</a>
- > [!TIP]
-[![Netlify Status](https://api.netlify.com/api/v1/badges/11d93069-5655-4db9-b73d-b34de9c5deab/deploy-status)](https://app.netlify.com/sites/twinkconnect/deploys)
+Live At: <a href="https://wechat.vercel.app">Vercel | WeChat</a>
+
+> [!WARNING]  
+> **It is highly recommended to test this application locally** rather than relying on the deployed version. The deployed version uses Vercel's free tier, which cannot guarantee a consistent experience due to cold starts, timeout limitations, and other free-tier constraints.
 
 ## 💻 Tech Stack
 
@@ -118,7 +119,7 @@ Live At: <a href="https://twinkconnect.netlify.app">Netlify | TwinkConnect</a>
 
 ## 👾 Installation
 
-### Bankend:
+### Backend:
 
 From root directory, move to the backend using command
 
@@ -144,7 +145,7 @@ Start the backend using nodemon
 $ npm start
 ```
 
-## Frontend:
+### Frontend:
 
 From root directory, move to the frontend using command
 
@@ -281,10 +282,8 @@ $ npm run build
 │   │   │   │   │   ├── flag_ja.svg
 │   │   │   │   │   ├── flag_vn.svg
 │   │   │   │   ├── logo/
-│   │   │   │   │   ├── TwinkConnect-old.png
-│   │   │   │   │   ├── TwinkConnect.png
-│   │   │   │   │   ├── TwinkConnectSub.png
-│   │   │   │   │   ├── VaibhawMishra.ico
+│   │   │   │   │   ├── WeChat.png
+│   │   │   │   │   ├── WeChatSub.png
 │   │   │   ├── Illustration/
 │   │   │   │   ├── Animations/
 │   │   │   │   │   ├── Cat404.json
@@ -556,10 +555,20 @@ $ npm run build
 │   ├── README.md
 ```
 </details>
-<br/>
+
+## ⚠️ Local Testing Recommendation
+
+Due to the limitations of Vercel's free tier, it's highly recommended to test this application locally:
+
+1. Free tier deployments have cold starts which can cause delays in API responses
+2. Socket connections may experience disruptions on free hosting
+3. Backend services may timeout on complex operations
+4. Local testing provides a more reliable and responsive experience
+
+For the best experience and to fully evaluate the application's capabilities, please follow the installation instructions above to run the app on your local machine.
 
 <div align="center">
-<img src="https://komarev.com/ghpvc/?username=itsvaibhavmishra&&style=for-the-badge" align="center" />
+<img src="https://komarev.com/ghpvc/?username=Baohole&&style=for-the-badge" align="center" />
 </div>
 
 <br/>
