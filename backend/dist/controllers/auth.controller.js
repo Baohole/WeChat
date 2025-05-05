@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Logout = exports.SendOtp = exports.ResetPassword = exports.VerifyOtp = exports.ForgotPassword = exports.Register = exports.Login = void 0;
+exports.RefreshToken = exports.Logout = exports.SendOtp = exports.ResetPassword = exports.VerifyOtp = exports.ForgotPassword = exports.Register = exports.Login = void 0;
 const http_errors_1 = __importDefault(require("http-errors"));
 const crypto_1 = __importDefault(require("crypto"));
 const AuthServ_services_1 = require("../services/AuthServ.services");
@@ -13,6 +13,7 @@ const CreatOtp_utils_1 = require("../utils/CreatOtp.utils");
 const reset_1 = __importDefault(require("../mailtemplates/reset"));
 const User_models_1 = __importDefault(require("../models/User.models"));
 const Otp_models_1 = __importDefault(require("../models/Otp.models"));
+const GenToken_utils_1 = require("../utils/GenToken.utils");
 const Login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
@@ -20,6 +21,9 @@ const Login = async (req, res, next) => {
             throw http_errors_1.default.BadRequest("Required fields: email & password");
         }
         const user = await User_models_1.default.findOne({ email: email }).select('-password');
+        if (!user || !(await user.correctPassword(password, user.password))) {
+            throw http_errors_1.default.BadRequest("Incorrect Email or Password");
+        }
         res.status(200).json({
             status: "success",
             message: "Logged in successfully",
@@ -134,12 +138,10 @@ const ResetPassword = async (req, res) => {
         if (!req.body.token) {
             throw http_errors_1.default.BadRequest("Required field: token");
         }
-        console.log('ok', req.body.token);
         const hashedToken = crypto_1.default
             .createHash("sha256")
             .update(req.body.token)
             .digest("hex");
-        console.log('ok', hashedToken);
         const user = await User_models_1.default.findOne({
             passwordResetToken: hashedToken,
             passwordResetExpires: { $gt: Date.now() },
@@ -177,8 +179,6 @@ const SendOtp = async (req, res, next) => {
         };
         const newOTP = new Otp_models_1.default(data);
         await newOTP.save();
-        const lastResetLinkTime = user.passwordResetLastSent ? new Date(user.passwordResetLastSent).getTime() : null;
-        const cooldownPeriod = 90 * 1000;
         user.passwordResetLastSent = new Date(Date.now());
         await user.save();
         const subject = 'Mã OTP xác minh mật khẩu';
@@ -209,4 +209,42 @@ const Logout = async (req, res, next) => {
     }
 };
 exports.Logout = Logout;
+const RefreshToken = async (req, res, next) => {
+    try {
+        const refresh_token = req.cookies.refreshToken;
+        if (!refresh_token)
+            throw http_errors_1.default.Forbidden("Please login");
+        const check = await (0, GenToken_utils_1.verify)(refresh_token, process.env.JWT_REFRESH_SECRET);
+        const user = await User_models_1.default.findOne({ _id: check.userId, verified: true });
+        if (!user) {
+            throw http_errors_1.default.NotFound("User not verified/does not exist");
+        }
+        const access_token = await (0, GenToken_utils_1.sign)({ userId: user._id }, "1d", process.env.JWT_ACCESS_SECRET);
+        res.cookie("accessToken", access_token, {
+            httpOnly: true,
+            secure: true,
+            maxAge: 1 * 24 * 60 * 60 * 1000,
+            sameSite: "none",
+            priority: "high",
+        });
+        return res.status(200).json({
+            status: "success",
+            message: "Token Refreshed",
+            user: {
+                _id: user._id,
+                firstName: user.firstName,
+                lastName: user.lastName,
+                avatar: user.avatar,
+                email: user.email,
+                activityStatus: user.activityStatus,
+                onlineStatus: user.onlineStatus,
+                token: access_token,
+            },
+        });
+    }
+    catch (error) {
+        next(error);
+    }
+};
+exports.RefreshToken = RefreshToken;
 //# sourceMappingURL=auth.controller.js.map

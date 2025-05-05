@@ -17,4 +17,6 @@ router.post('/verify-otp', controller.VerifyOtp);
 router.post('/reset-password', controller.ResetPassword);
 router.post('/logout', controller.Logout);
 
+
+router.post("/refresh-token", controller.RefreshToken);
 export default router;

@@ -92,6 +92,9 @@ userSchema.pre("save", async function (next) {
     }
     next();
 });
+userSchema.methods.correctPassword = function (candidatePassword, userPassword) {
+    return bcrypt_1.default.compare(candidatePassword, userPassword);
+};
 userSchema.methods.correctOTP = function (candidateOTP, userOTP) {
     return bcrypt_1.default.compare(candidateOTP, userOTP);
 };

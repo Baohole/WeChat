@@ -46,5 +46,6 @@ router.post('/forgot-password', controller.ForgotPassword);
 router.post('/verify-otp', controller.VerifyOtp);
 router.post('/reset-password', controller.ResetPassword);
 router.post('/logout', controller.Logout);
+router.post("/refresh-token", controller.RefreshToken);
 exports.default = router;
 //# sourceMappingURL=auth.routes.js.map
