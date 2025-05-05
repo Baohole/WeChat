@@ -9,9 +9,11 @@ import { filterObj } from '../utils/FilterObjs.utils';
 import { createOtp } from '../utils/CreatOtp.utils';
 import reset from '../mailtemplates/reset';
 
-import User, { IUser } from '../models/User.models';
+import User from '../models/User.models';
 import Otp from '../models/Otp.models';
 import AuthenticatedRequest from '../interface/request.inf';
+
+import { sign, verify } from "../utils/GenToken.utils";
 
 // const createOTP = require('../../helper/creatOTP.helper');
 // const sendMail = require('../../helper/sendMail.helper');
@@ -27,10 +29,9 @@ export const Login = async (req: Request, res: Response, next: NextFunction): Pr
         }
 
         const user = await User.findOne({ email: email }).select('-password');
-        // console.log(user)
-        // if (!user || !(await user.correctPassword(password, user.password))) {
-        //     throw createHttpError.BadRequest("Incorrect Email or Password")
-        // }
+        if (!user || !(await user.correctPassword(password, user.password))) {
+            throw createHttpError.BadRequest("Incorrect Email or Password")
+        }
 
         res.status(200).json({
             status: "success",
@@ -156,14 +157,6 @@ export const VerifyOtp = async (req: Request, res: Response, next: NextFunction)
             email
         })
 
-        // const resetToken = await user.createPasswordResetToken();
-        // const resetURL = `${process.env.FE_URL}/auth/reset-password/?code=${resetToken}`;
-
-        // const subject = "WeChat - Here's your Password Reset Link";
-        // const message = reset(user.firstName, resetURL);
-
-        // // Send the OTP email to the user
-        // sendMail(req.body.email, subject, message);
         const access_token = await generateLoginTokens(user, res);
 
         // grant access to login
@@ -196,14 +189,11 @@ export const ResetPassword = async (req: Request, res: Response): Promise<any> =
             throw createHttpError.BadRequest("Required field: token");
         }
 
-        console.log('ok', req.body.token)
-
         const hashedToken = crypto
             .createHash("sha256")
             .update(req.body.token)
             .digest("hex");
 
-        console.log('ok', hashedToken)
         const user = await User.findOne({
             passwordResetToken: hashedToken,
             passwordResetExpires: { $gt: Date.now() },
@@ -255,24 +245,6 @@ export const SendOtp = async (req: Request, res: Response, next: NextFunction): 
         const newOTP = new Otp(data);
         await newOTP.save();
 
-        // Check for password reset cooldown
-        const lastResetLinkTime: number = user.passwordResetLastSent ? new Date(user.passwordResetLastSent).getTime() : null;
-        const cooldownPeriod = 90 * 1000; // 90 seconds
-
-        // if (
-        //     lastResetLinkTime &&
-        //     Date.now() - lastResetLinkTime < cooldownPeriod
-        // ) {
-        //     const timeRemaining = Math.ceil(
-        //         (cooldownPeriod - (Date.now() - lastResetLinkTime)) / 1000
-        //     );
-        //     const remainingTimeString = formatRemainingTime(timeRemaining);
-
-        //     throw createHttpError.TooEarly(
-        //         `Please wait ${remainingTimeString} before requesting a new reset link`
-        //     );
-        // }
-
 
         // Update last sent time for password reset link
         user.passwordResetLastSent = new Date(Date.now());
@@ -310,3 +282,56 @@ export const Logout = async (req: Request, res: Response, next: NextFunction): P
         next(err)
     }
 }
+
+
+export const RefreshToken = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+    try {
+      const refresh_token = req.cookies.refreshToken;
+  
+      if (!refresh_token) throw createHttpError.Forbidden("Please login");
+  
+      const check = await verify(
+        refresh_token,
+        process.env.JWT_REFRESH_SECRET
+      );
+  
+      const user = await User.findOne({ _id: ( check as any).userId, verified: true });
+  
+      if (!user) {
+        throw createHttpError.NotFound("User not verified/does not exist");
+      }
+  
+      // generating user token
+      const access_token = await sign(
+        { userId: user._id },
+        "1d",
+        process.env.JWT_ACCESS_SECRET
+      );
+  
+      // store access token to cookies
+      res.cookie("accessToken", access_token, {
+        httpOnly: true,
+        secure: true,
+        maxAge: 1 * 24 * 60 * 60 * 1000, // 1 day
+        sameSite: "none",
+        priority: "high",
+      });
+  
+      return res.status(200).json({
+        status: "success",
+        message: "Token Refreshed",
+        user: {
+          _id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          avatar: user.avatar,
+          email: user.email,
+          activityStatus: user.activityStatus,
+          onlineStatus: user.onlineStatus,
+          token: access_token,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };

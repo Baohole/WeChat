@@ -103,12 +103,12 @@ userSchema.pre<IUser>("save", async function (next): Promise<void> {
 });
 
 // Compare password method
-// userSchema.methods.correctPassword = function (
-//   candidatePassword: string,
-//   userPassword: string
-// ): Promise<boolean> {
-//   return bcrypt.compare(candidatePassword, userPassword);
-// };
+userSchema.methods.correctPassword = function (
+  candidatePassword: string,
+  userPassword: string
+): Promise<boolean> {
+  return bcrypt.compare(candidatePassword, userPassword);
+};
 
 // Compare OTP method
 userSchema.methods.correctOTP = function (

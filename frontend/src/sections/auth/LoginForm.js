@@ -34,11 +34,11 @@ const LoginForm = () => {
     email: Yup.string().required("Email Required").email("Invalid Email"),
     password: Yup.string()
       .required("Password Required")
-    // .min(8, "Password must be atleast 8 characters long")
-    // .matches(/[0-9]/, "Password requires a number")
-    // .matches(/[a-z]/, "Password requires a lowercase letter")
-    // .matches(/[A-Z]/, "Password requires an uppercase letter")
-    // .matches(/[^\w]/, "Password requires a symbol"),
+    .min(8, "Password must be atleast 8 characters long")
+    .matches(/[0-9]/, "Password requires a number")
+    .matches(/[a-z]/, "Password requires a lowercase letter")
+    .matches(/[A-Z]/, "Password requires an uppercase letter")
+    .matches(/[^\w]/, "Password requires a symbol"),
   });
 
   // Labels

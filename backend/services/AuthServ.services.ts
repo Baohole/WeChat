@@ -3,21 +3,21 @@ import { generateToken } from "./TokenServ.services";
 import { Response } from "express";
 import {Models} from "mongoose";
 
-// export const verifyreCAPTCHA = async (recaptchaToken) => {
-//   // Verify reCAPTCHA token
-//   const { data } = await axios.post(
-//     "https://www.google.com/recaptcha/api/siteverify",
-//     null,
-//     {
-//       params: {
-//         secret: process.env.GOOGLE_RECAPTCHA_SECRET,
-//         response: recaptchaToken,
-//       },
-//     }
-//   );
+export const verifyreCAPTCHA = async (recaptchaToken: any) => {
+  // Verify reCAPTCHA token
+  const { data } = await axios.post(
+    "https://www.google.com/recaptcha/api/siteverify",
+    null,
+    {
+      params: {
+        secret: process.env.GOOGLE_RECAPTCHA_SECRET,
+        response: recaptchaToken,
+      },
+    }
+  );
 
-//   return data;
-// };
+  return data;
+};
 
 // generate login tokens
 export const generateLoginTokens = async (user: any, res: Response) => {

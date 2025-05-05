@@ -32,17 +32,17 @@ const ResetPasswordForm = () => {
   //  Login Schema
   const NewPasswordSchema = Yup.object().shape({
     password: Yup.string()
-      .required("Password Required"),
-      // .min(8, "Password must be atleast 8 characters long")
-      // .max(16, "Password cannot be more that 16 characters")
-      // .matches(/[0-9]/, "Password requires a number")
-      // .matches(/[a-z]/, "Password requires a lowercase letter")
-      // .matches(/[A-Z]/, "Password requires an uppercase letter")
-      // .matches(/[^\w]/, "Password requires a symbol"),
+      .required("Password Required")
+      .min(8, "Password must be atleast 8 characters long")
+      .max(16, "Password cannot be more that 16 characters")
+      .matches(/[0-9]/, "Password requires a number")
+      .matches(/[a-z]/, "Password requires a lowercase letter")
+      .matches(/[A-Z]/, "Password requires an uppercase letter")
+      .matches(/[^\w]/, "Password requires a symbol"),
 
     passwordConfirm: Yup.string()
       .required("Password Required")
-      // .oneOf([Yup.ref("password"), null], "Password does not match"),
+      .oneOf([Yup.ref("password"), null], "Password does not match"),
   });
 
   //   Labels
