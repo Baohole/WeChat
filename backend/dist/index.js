@@ -39,6 +39,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const express_session_1 = __importDefault(require("express-session"));
+const helmet_1 = __importDefault(require("helmet"));
+const express_xss_sanitizer_1 = require("express-xss-sanitizer");
+const express_mongo_sanitize_1 = __importDefault(require("express-mongo-sanitize"));
+const compression_1 = __importDefault(require("compression"));
+const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const cors_1 = __importDefault(require("cors"));
 const http_1 = __importDefault(require("http"));
@@ -60,6 +65,17 @@ app.use((0, express_session_1.default)({
     saveUninitialized: true,
     cookie: { maxAge: 6000 }
 }));
+const limiter = (0, express_rate_limit_1.default)({
+    max: 3000,
+    windowMs: 60 * 60 * 1000,
+    message: "Too many requests was made, please try again after 1 hour",
+});
+app.use("/", limiter);
+app.use((0, helmet_1.default)());
+app.use((0, express_xss_sanitizer_1.xss)());
+app.use((0, express_mongo_sanitize_1.default)());
+app.use((0, cookie_parser_1.default)());
+app.use((0, compression_1.default)());
 database.connect();
 app.get("/", (req, res) => {
     res.send("Welcome to WeChat Backend😺");
@@ -67,5 +83,26 @@ app.get("/", (req, res) => {
 (0, index_routes_1.default)(app);
 server.listen(port, () => {
     console.log(`Server running on port ${port}`);
+});
+const exitHandler = () => {
+    if (server) {
+        console.log("Closing Server...");
+        process.exit(1);
+    }
+    else {
+        process.exit(1);
+    }
+};
+const unexpectedErrorHandler = (error) => {
+    console.log(error);
+    exitHandler();
+};
+process.on("uncaughtException", unexpectedErrorHandler);
+process.on("unhandledRejection", unexpectedErrorHandler);
+process.on("SIGTERM", () => {
+    if (server) {
+        console.log("Closing Server...");
+        process.exit(1);
+    }
 });
 //# sourceMappingURL=index.js.map
