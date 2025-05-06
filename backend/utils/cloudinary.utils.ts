@@ -1,5 +1,6 @@
-const cloudinary = require('cloudinary').v2
-const streamifier = require('streamifier');
+import { v2 as cloudinary } from 'cloudinary';
+import streamifier from 'streamifier';
+
 
 const streamUpload = (file: any, buffer: any) => {
     cloudinary.config({
